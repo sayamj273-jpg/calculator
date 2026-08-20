@@ -1,240 +1,65 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Calculator AI</title>
 
 <style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{
+  min-height:100vh;background:#f2f3f7;
+  display:flex;justify-content:center;padding:20px
 }
-
-body {
-  min-height: 100vh;
-  background: #f2f3f7;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 18px;
+.app{width:min(1000px,100%);display:grid;grid-template-columns:430px 1fr;gap:18px}
+.card{background:white;border-radius:24px;padding:18px;box-shadow:0 10px 35px #0001}
+h1{font-size:22px;margin-bottom:15px}
+.display{background:#eef0f5;border-radius:18px;padding:15px;text-align:right;margin-bottom:10px}
+.expression{height:25px;color:#777;overflow:auto}
+.result{font-size:38px;font-weight:bold;word-break:break-all}
+.memory,.buttons,.scientific{display:grid;gap:8px}
+.memory{grid-template-columns:repeat(4,1fr);margin-bottom:8px}
+.memory button{height:38px;font-size:13px}
+.buttons{grid-template-columns:repeat(4,1fr)}
+button{
+  border:0;border-radius:14px;height:58px;
+  background:#eef0f4;font-size:19px;font-weight:bold;
+  cursor:pointer
 }
-
-.app {
-  width: min(920px, 100%);
-  display: grid;
-  grid-template-columns: minmax(320px, 430px) 1fr;
-  gap: 18px;
+button:active{transform:scale(.96)}
+.op{background:#e0e7ff}
+.clear{background:#ffdede}
+.equal{background:#222;color:white}
+.zero{grid-column:span 2}
+.tools{display:flex;gap:8px;margin-top:8px}
+.tools button{height:42px;flex:1;font-size:13px}
+.mode{display:flex;gap:8px;margin-top:10px}
+.mode button{height:40px;flex:1;font-size:14px}
+.scientific{
+  display:none;grid-template-columns:repeat(5,1fr);
+  margin-top:8px
 }
-
-.card {
-  background: white;
-  border-radius: 28px;
-  padding: 20px;
-  box-shadow: 0 15px 45px rgba(0,0,0,.12);
+.scientific.show{display:grid}
+.scientific button{height:43px;font-size:13px}
+.ai{
+  background:#f5f6f9;border-radius:17px;padding:14px;margin-top:12px
 }
-
-.brand {
-  font-size: 22px;
-  font-weight: 800;
-  margin-bottom: 14px;
+.ai h2{font-size:17px;margin-bottom:5px}
+.ai p{font-size:13px;color:#777;margin-bottom:9px}
+.airow{display:flex;gap:7px}
+.airow input{
+  flex:1;min-width:0;border:1px solid #ddd;
+  border-radius:11px;padding:11px;font-size:14px
 }
-
-.display {
-  background: #eef0f5;
-  border-radius: 20px;
-  padding: 18px;
-  min-height: 120px;
-  text-align: right;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  overflow: hidden;
-}
-
-.expression {
-  font-size: 16px;
-  color: #777;
-  min-height: 23px;
-  white-space: nowrap;
-  overflow: auto;
-}
-
-.result {
-  font-size: 38px;
-  font-weight: 700;
-  word-break: break-all;
-}
-
-.buttons {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  margin-top: 16px;
-}
-
-button {
-  height: 60px;
-  border: 0;
-  border-radius: 17px;
-  background: #f0f1f5;
-  font-size: 20px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-button:active {
-  transform: scale(.95);
-  opacity: .8;
-}
-
-.operator {
-  background: #e0e7ff;
-}
-
-.clear {
-  background: #ffe0e0;
-}
-
-.equals {
-  background: #222;
-  color: white;
-}
-
-.zero {
-  grid-column: span 2;
-}
-
-.memory {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 7px;
-  margin-top: 10px;
-}
-
-.memory button {
-  height: 38px;
-  font-size: 13px;
-}
-
-.tools {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.tools button {
-  height: 42px;
-  font-size: 14px;
-  flex: 1;
-}
-
-.ai-box {
-  margin-top: 14px;
-  background: #f5f6f9;
-  border-radius: 18px;
-  padding: 14px;
-}
-
-.ai-box h3 {
-  font-size: 17px;
-  margin-bottom: 4px;
-}
-
-.ai-box p {
-  font-size: 13px;
-  color: #777;
-  margin-bottom: 9px;
-}
-
-.ai-row {
-  display: flex;
-  gap: 7px;
-}
-
-.ai-row input {
-  min-width: 0;
-  flex: 1;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 11px;
-  font-size: 14px;
-}
-
-.ai-row button {
-  height: 44px;
-  padding: 0 15px;
-  background: #222;
-  color: #fff;
-  border-radius: 12px;
-  font-size: 14px;
-}
-
-.ai-answer {
-  margin-top: 10px;
-  font-size: 14px;
-  line-height: 1.5;
-  white-space: pre-wrap;
-}
-
-.history-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.history-head h2 {
-  font-size: 19px;
-}
-
-.history-list {
-  max-height: 480px;
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.history-item {
-  background: #f5f6f9;
-  border-radius: 14px;
-  padding: 11px;
-  cursor: pointer;
-}
-
-.history-item .exp {
-  font-size: 13px;
-  color: #777;
-}
-
-.history-item .ans {
-  font-size: 18px;
-  font-weight: 700;
-  margin-top: 3px;
-}
-
-.empty {
-  color: #888;
-  text-align: center;
-  padding: 30px 10px;
-}
-
-@media(max-width:720px) {
-  .app {
-    grid-template-columns: 1fr;
-  }
-
-  .history-list {
-    max-height: 220px;
-  }
-
-  .card {
-    padding: 16px;
-  }
+.airow button{height:44px;background:#222;color:white;padding:0 15px;font-size:14px}
+.answer{margin-top:10px;line-height:1.5;font-size:14px}
+.history-head{display:flex;justify-content:space-between;margin-bottom:12px}
+.history{max-height:600px;overflow:auto}
+.item{background:#f5f6f9;padding:11px;border-radius:12px;margin-bottom:8px}
+.item .exp{color:#777;font-size:13px}
+.item .ans{font-size:18px;font-weight:bold}
+@media(max-width:750px){
+  .app{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -243,778 +68,694 @@ button:active {
 
 <div class="app">
 
-  <main class="card">
+<!-- CALCULATOR -->
+<div class="card">
 
-    <div class="brand">
-      Calculator AI
-      <span style="font-size:12px;color:#777;font-weight:500">
-        • Multi-calculation
-      </span>
-    </div>
+<h1>🤖 Calculator AI</h1>
 
-    <section class="display">
-      <div class="expression" id="expression"></div>
-      <div class="result" id="result">0</div>
-    </section>
+<div class="display">
+  <div class="expression" id="expression"></div>
+  <div class="result" id="result">0</div>
+</div>
 
-    <!-- MEMORY -->
-    <div class="memory">
-      <button onclick="memoryClear()">MC</button>
-      <button onclick="memoryRecall()">MR</button>
-      <button onclick="memoryAdd()">M+</button>
-      <button onclick="memorySubtract()">M−</button>
-    </div>
+<!-- MEMORY -->
+<div class="memory">
+  <button onclick="mc()">MC</button>
+  <button onclick="mr()">MR</button>
+  <button onclick="mplus()">M+</button>
+  <button onclick="mminus()">M−</button>
+</div>
 
-    <!-- CALCULATOR -->
-    <section class="buttons">
+<!-- BASIC -->
+<div class="buttons">
 
-      <button class="clear" onclick="clearCalculator()">AC</button>
-      <button onclick="backspace()">⌫</button>
-      <button class="operator" onclick="percentage()">%</button>
-      <button class="operator" onclick="chooseOperator('/')">÷</button>
+<button class="clear" onclick="clearCalc()">AC</button>
+<button onclick="backspace()">⌫</button>
+<button onclick="percent()">%</button>
+<button class="op" onclick="operator('/')">÷</button>
 
-      <button onclick="inputNumber('7')">7</button>
-      <button onclick="inputNumber('8')">8</button>
-      <button onclick="inputNumber('9')">9</button>
-      <button class="operator" onclick="chooseOperator('*')">×</button>
+<button onclick="number('7')">7</button>
+<button onclick="number('8')">8</button>
+<button onclick="number('9')">9</button>
+<button class="op" onclick="operator('*')">×</button>
 
-      <button onclick="inputNumber('4')">4</button>
-      <button onclick="inputNumber('5')">5</button>
-      <button onclick="inputNumber('6')">6</button>
-      <button class="operator" onclick="chooseOperator('-')">−</button>
+<button onclick="number('4')">4</button>
+<button onclick="number('5')">5</button>
+<button onclick="number('6')">6</button>
+<button class="op" onclick="operator('-')">−</button>
 
-      <button onclick="inputNumber('1')">1</button>
-      <button onclick="inputNumber('2')">2</button>
-      <button onclick="inputNumber('3')">3</button>
-      <button class="operator" onclick="chooseOperator('+')">+</button>
+<button onclick="number('1')">1</button>
+<button onclick="number('2')">2</button>
+<button onclick="number('3')">3</button>
+<button class="op" onclick="operator('+')">+</button>
 
-      <button class="zero" onclick="inputNumber('0')">0</button>
-      <button onclick="inputDecimal()">.</button>
-      <button class="equals" onclick="calculate()">=</button>
+<button class="zero" onclick="number('0')">0</button>
+<button onclick="decimal()">.</button>
+<button class="equal" onclick="equals()">=</button>
 
-    </section>
+</div>
 
-    <!-- EXTRA FUNCTIONS -->
-    <div class="tools">
-      <button onclick="toggleSign()">±</button>
-      <button onclick="square()">x²</button>
-      <button onclick="squareRoot()">√x</button>
-      <button onclick="clearHistory()">Clear history</button>
-    </div>
+<!-- EXTRA -->
+<div class="tools">
+<button onclick="sign()">±</button>
+<button onclick="scientific('square')">x²</button>
+<button onclick="scientific('sqrt')">√x</button>
+<button onclick="clearHistory()">Clear history</button>
+</div>
 
-    <!-- AI QUESTION BOX -->
-    <div class="ai-box">
+<!-- SCIENTIFIC MODE -->
+<div class="mode">
+<button onclick="toggleScientific()">Scientific</button>
+<button onclick="toggleAngle()" id="angle">DEG</button>
+</div>
 
-      <h3>🤖 AI Calculator</h3>
+<div class="scientific" id="scientific">
 
-      <p>
-        Ask a math question or calculation.
-      </p>
+<button onclick="scientific('sin')">sin</button>
+<button onclick="scientific('cos')">cos</button>
+<button onclick="scientific('tan')">tan</button>
+<button onclick="scientific('asin')">sin⁻¹</button>
+<button onclick="scientific('acos')">cos⁻¹</button>
 
-      <div class="ai-row">
+<button onclick="scientific('atan')">tan⁻¹</button>
+<button onclick="scientific('log')">log</button>
+<button onclick="scientific('ln')">ln</button>
+<button onclick="scientific('exp')">eˣ</button>
+<button onclick="scientific('pow10')">10ˣ</button>
 
-        <input
-          id="aiQuestion"
-          placeholder="Example: What is 25% of 480?"
-        >
+<button onclick="scientific('pi')">π</button>
+<button onclick="scientific('e')">e</button>
+<button onclick="scientific('factorial')">x!</button>
+<button onclick="scientific('inverse')">1/x</button>
+<button onclick="scientific('abs')">|x|</button>
 
-        <button onclick="askAI()">Ask</button>
+<button onclick="scientific('cube')">x³</button>
+<button onclick="scientific('cuberoot')">∛x</button>
+<button onclick="scientific('random')">Rand</button>
 
-      </div>
+</div>
 
-      <div id="aiAnswer" class="ai-answer">
-        AI answer will appear here.
-      </div>
+<!-- AI -->
+<div class="ai">
 
-    </div>
+<h2>🧠 AI Math Assistant</h2>
 
-  </main>
+<p>Ask a math question.</p>
 
-  <!-- HISTORY -->
-  <aside class="card">
+<div class="airow">
 
-    <div class="history-head">
-      <h2>Calculation History</h2>
-      <span id="count">0</span>
-    </div>
+<input
+ id="question"
+ placeholder="Example: What is 25% of 480?"
+>
 
-    <div class="history-list" id="historyList">
-      <div class="empty">
-        No calculations yet
-      </div>
-    </div>
+<button onclick="askAI()">Ask</button>
 
-  </aside>
+</div>
+
+<div class="answer" id="answer">
+AI answer will appear here.
+</div>
+
+</div>
+
+</div>
+
+
+<!-- HISTORY -->
+<div class="card">
+
+<div class="history-head">
+<h2>Calculation History</h2>
+<span id="count">0</span>
+</div>
+
+<div class="history" id="history">
+No calculations yet.
+</div>
+
+</div>
 
 </div>
 
 
 <script>
 
-let current = "0";
-let previous = null;
-let operator = null;
-let waiting = false;
-let memory = 0;
+let current="0";
+let previous=null;
+let op=null;
+let waiting=false;
+let memory=0;
+let angle="DEG";
+let justCalculated=false;
 
-let history =
-  JSON.parse(
-    localStorage.getItem("easyCalcHistory") || "[]"
+let history=JSON.parse(
+ localStorage.getItem("calcAIHistory")||"[]"
+);
+
+const result=document.getElementById("result");
+const expression=document.getElementById("expression");
+
+
+function symbol(x){
+ return {
+  "+":"+",
+  "-":"−",
+  "*":"×",
+  "/":"÷"
+ }[x]||x;
+}
+
+
+function update(){
+
+ result.textContent=current;
+
+ expression.textContent=
+  previous!==null&&op
+  ? previous+" "+symbol(op)
+  :"";
+
+ renderHistory();
+}
+
+
+function number(n){
+
+ if(current==="Error") clearCalc();
+
+ if(waiting||justCalculated){
+  current=n;
+  waiting=false;
+  justCalculated=false;
+ }else{
+  current=current==="0"?n:current+n;
+ }
+
+ update();
+}
+
+
+function decimal(){
+
+ if(waiting||justCalculated){
+  current="0.";
+  waiting=false;
+  justCalculated=false;
+ }else if(!current.includes(".")){
+  current+=".";
+ }
+
+ update();
+}
+
+
+function operator(x){
+
+ if(current==="Error")return;
+
+ if(previous!==null&&op&&!waiting){
+  equals(false);
+ }
+
+ previous=parseFloat(current);
+ op=x;
+ waiting=true;
+ justCalculated=false;
+
+ update();
+}
+
+
+function equals(save=true){
+
+ if(previous===null||op===null)return;
+
+ let a=previous;
+ let b=parseFloat(current);
+ let ans;
+
+ if(op==="+")ans=a+b;
+ if(op==="-")ans=a-b;
+ if(op==="*")ans=a*b;
+
+ if(op==="/"){
+  if(b===0){
+   current="Error";
+   previous=null;
+   op=null;
+   update();
+   return;
+  }
+  ans=a/b;
+ }
+
+ current=format(ans);
+
+ if(save){
+
+  history.unshift({
+   exp:`${a} ${symbol(op)} ${b}`,
+   ans:current
+  });
+
+  history=history.slice(0,100);
+
+  localStorage.setItem(
+   "calcAIHistory",
+   JSON.stringify(history)
   );
+ }
 
-const result =
-  document.getElementById("result");
+ previous=null;
+ op=null;
+ waiting=false;
+ justCalculated=true;
 
-const expression =
-  document.getElementById("expression");
-
-
-function symbol(op) {
-
-  return ({
-    "*": "×",
-    "/": "÷",
-    "-": "−",
-    "+": "+"
-  })[op] || op;
-
+ update();
 }
 
 
-function update() {
-
-  result.textContent = current;
-
-  expression.textContent =
-    previous !== null && operator
-      ? `${previous} ${symbol(operator)}`
-      : "";
-
-  renderHistory();
-
+function format(n){
+ return Number(n.toFixed(12)).toString();
 }
 
 
-function inputNumber(number) {
+function clearCalc(){
 
-  if (
-    current === "Error" ||
-    waiting
-  ) {
+ current="0";
+ previous=null;
+ op=null;
+ waiting=false;
+ justCalculated=false;
 
-    current = number;
-    waiting = false;
-
-  } else {
-
-    current =
-      current === "0"
-        ? number
-        : current + number;
-
-  }
-
-  update();
-
+ update();
 }
 
 
-function inputDecimal() {
+function backspace(){
 
-  if (
-    current === "Error" ||
-    waiting
-  ) {
+ if(current.length<=1||current==="Error")
+  current="0";
+ else
+  current=current.slice(0,-1);
 
-    current = "0.";
-    waiting = false;
-
-  } else if (
-    !current.includes(".")
-  ) {
-
-    current += ".";
-
-  }
-
-  update();
-
+ update();
 }
 
 
-/* MULTIPLE CALCULATIONS */
+function percent(){
 
-function chooseOperator(op) {
-
-  if (current === "Error")
-    return;
-
-  if (
-    previous !== null &&
-    operator !== null &&
-    !waiting
-  ) {
-
-    calculate(false);
-
-  }
-
-  previous = parseFloat(current);
-  operator = op;
-  waiting = true;
-
-  update();
-
+ current=format(parseFloat(current)/100);
+ update();
 }
 
 
-function calculate(save = true) {
+function sign(){
 
-  if (
-    previous === null ||
-    operator === null
-  )
-    return;
+ if(current!=="0"&&current!=="Error")
+  current=format(parseFloat(current)*-1);
 
-  const a = previous;
-  const b = parseFloat(current);
-
-  let answer;
-
-  if (operator === "+")
-    answer = a + b;
-
-  if (operator === "-")
-    answer = a - b;
-
-  if (operator === "*")
-    answer = a * b;
-
-  if (operator === "/") {
-
-    if (b === 0) {
-
-      current = "Error";
-      previous = null;
-      operator = null;
-
-      update();
-
-      return;
-
-    }
-
-    answer = a / b;
-
-  }
-
-  const exp =
-    `${a} ${symbol(operator)} ${b}`;
-
-  current =
-    Number(
-      answer.toFixed(12)
-    ).toString();
-
-
-  if (save) {
-
-    history.unshift({
-      exp: exp,
-      ans: current
-    });
-
-    history =
-      history.slice(0, 50);
-
-    localStorage.setItem(
-      "easyCalcHistory",
-      JSON.stringify(history)
-    );
-
-  }
-
-  previous = null;
-  operator = null;
-  waiting = true;
-
-  update();
-
-}
-
-
-function percentage() {
-
-  current =
-    (
-      parseFloat(current) / 100
-    ).toString();
-
-  update();
-
-}
-
-
-function backspace() {
-
-  if (
-    current === "Error" ||
-    current.length <= 1
-  ) {
-
-    current = "0";
-
-  } else {
-
-    current =
-      current.slice(0, -1);
-
-  }
-
-  update();
-
-}
-
-
-function clearCalculator() {
-
-  current = "0";
-  previous = null;
-  operator = null;
-  waiting = false;
-
-  update();
-
-}
-
-
-function toggleSign() {
-
-  if (
-    current !== "0" &&
-    current !== "Error"
-  ) {
-
-    current =
-      (
-        parseFloat(current) * -1
-      ).toString();
-
-  }
-
-  update();
-
-}
-
-
-function square() {
-
-  if (current !== "Error") {
-
-    current =
-      (
-        parseFloat(current) ** 2
-      ).toString();
-
-  }
-
-  update();
-
-}
-
-
-function squareRoot() {
-
-  if (current !== "Error") {
-
-    const n =
-      parseFloat(current);
-
-    current =
-      n < 0
-        ? "Error"
-        : Math.sqrt(n).toString();
-
-  }
-
-  update();
-
+ update();
 }
 
 
 /* MEMORY */
 
-function memoryClear() {
-  memory = 0;
+function mc(){
+ memory=0;
 }
 
-function memoryRecall() {
-
-  current = memory.toString();
-  waiting = false;
-
-  update();
-
+function mr(){
+ current=format(memory);
+ update();
 }
 
-function memoryAdd() {
-
-  memory +=
-    parseFloat(current) || 0;
-
+function mplus(){
+ memory+=parseFloat(current)||0;
 }
 
-function memorySubtract() {
-
-  memory -=
-    parseFloat(current) || 0;
-
+function mminus(){
+ memory-=parseFloat(current)||0;
 }
 
 
 /* HISTORY */
 
-function clearHistory() {
+function renderHistory(){
 
-  history = [];
+ document.getElementById("count").textContent=
+  history.length;
 
-  localStorage.removeItem(
-    "easyCalcHistory"
-  );
+ const box=document.getElementById("history");
 
-  renderHistory();
+ if(!history.length){
+  box.textContent="No calculations yet.";
+  return;
+ }
+
+ box.innerHTML=history.map((h,i)=>`
+  <div class="item" onclick="useHistory(${i})">
+   <div class="exp">${h.exp}</div>
+   <div class="ans">= ${h.ans}</div>
+  </div>
+ `).join("");
+}
+
+
+function useHistory(i){
+
+ current=history[i].ans;
+ waiting=false;
+
+ update();
+}
+
+
+function clearHistory(){
+
+ history=[];
+
+ localStorage.removeItem(
+  "calcAIHistory"
+ );
+
+ renderHistory();
+}
+
+
+/* SCIENTIFIC */
+
+function toggleScientific(){
+
+ document
+  .getElementById("scientific")
+  .classList.toggle("show");
 
 }
 
 
-function renderHistory() {
+function toggleAngle(){
 
-  document.getElementById(
-    "count"
-  ).textContent = history.length;
+ angle=angle==="DEG"?"RAD":"DEG";
 
-  const box =
-    document.getElementById(
-      "historyList"
-    );
-
-
-  if (!history.length) {
-
-    box.innerHTML =
-      '<div class="empty">No calculations yet</div>';
-
-    return;
-
-  }
-
-
-  box.innerHTML =
-    history.map(
-      (h, i) => `
-
-      <div
-        class="history-item"
-        onclick="useHistory(${i})"
-      >
-
-        <div class="exp">
-          ${h.exp}
-        </div>
-
-        <div class="ans">
-          = ${h.ans}
-        </div>
-
-      </div>
-
-    `
-    ).join("");
-
+ document.getElementById("angle").textContent=angle;
 }
 
 
-function useHistory(i) {
+function radians(x){
 
-  current =
-    history[i].ans;
-
-  waiting = false;
-
-  update();
-
+ return angle==="DEG"
+  ? x*Math.PI/180
+  : x;
 }
 
 
-/* AI MATH QUESTION BOX */
+function factorial(n){
 
-function askAI() {
+ if(n<0||!Number.isInteger(n)||n>170)
+  return null;
 
-  const input =
-    document.getElementById(
-      "aiQuestion"
-    );
+ let r=1;
 
-  const output =
-    document.getElementById(
-      "aiAnswer"
-    );
+ for(let i=2;i<=n;i++)
+  r*=i;
 
-  const question =
-    input.value.trim();
-
-
-  if (!question) {
-
-    output.textContent =
-      "Please enter a math question.";
-
-    return;
-
-  }
-
-
-  let match;
-
-
-  /* Percentage */
-
-  match =
-    question.match(
-      /(-?\d+(?:\.\d+)?)\s*%\s*(?:of)\s*(-?\d+(?:\.\d+)?)/i
-    );
-
-
-  if (match) {
-
-    const answer =
-      parseFloat(match[1]) /
-      100 *
-      parseFloat(match[2]);
-
-    output.textContent =
-      `${match[1]}% of ${match[2]} = ${answer}`;
-
-    return;
-
-  }
-
-
-  /* Square root */
-
-  match =
-    question.match(
-      /(?:square root of|sqrt\s*)(-?\d+(?:\.\d+)?)/i
-    );
-
-
-  if (match) {
-
-    const n =
-      parseFloat(match[1]);
-
-    if (n < 0) {
-
-      output.textContent =
-        "Square root of a negative number is not a real number.";
-
-    } else {
-
-      output.textContent =
-        `√${n} = ${Math.sqrt(n)}`;
-
-    }
-
-    return;
-
-  }
-
-
-  /* Square */
-
-  match =
-    question.match(
-      /(?:square of|squared)\s*(-?\d+(?:\.\d+)?)/i
-    );
-
-
-  if (match) {
-
-    const n =
-      parseFloat(match[1]);
-
-    output.textContent =
-      `${n}² = ${n * n}`;
-
-    return;
-
-  }
-
-
-  /* Addition / subtraction /
-     multiplication / division */
-
-  match =
-    question.match(
-      /(-?\d+(?:\.\d+)?)\s*(\+|minus|subtract|−|-|\*|x|×|divide by|÷|\/)\s*(-?\d+(?:\.\d+)?)/i
-    );
-
-
-  if (match) {
-
-    const a =
-      parseFloat(match[1]);
-
-    const b =
-      parseFloat(match[3]);
-
-    const op =
-      match[2].toLowerCase();
-
-    let answer;
-
-
-    if (op === "+") {
-
-      answer = a + b;
-
-    }
-
-    else if (
-      [
-        "minus",
-        "subtract",
-        "−",
-        "-"
-      ].includes(op)
-    ) {
-
-      answer = a - b;
-
-    }
-
-    else if (
-      [
-        "*",
-        "x",
-        "×"
-      ].includes(op)
-    ) {
-
-      answer = a * b;
-
-    }
-
-    else {
-
-      if (b === 0) {
-
-        output.textContent =
-          "Cannot divide by zero.";
-
-        return;
-
-      }
-
-      answer = a / b;
-
-    }
-
-
-    output.textContent =
-      `${a} ${match[2]} ${b} = ${answer}`;
-
-    return;
-
-  }
-
-
-  output.textContent =
-    "I can currently solve percentages, square roots, squares, addition, subtraction, multiplication and division.";
-
+ return r;
 }
 
 
-/* ENTER KEY IN AI BOX */
+function scientific(type){
 
-document
-  .getElementById("aiQuestion")
-  .addEventListener(
-    "keydown",
-    function(event) {
+ let n=parseFloat(current);
+ let ans;
 
-      if (event.key === "Enter") {
-        askAI();
-      }
+ switch(type){
 
-    }
-  );
+  case"sin":
+   ans=Math.sin(radians(n));
+   break;
+
+  case"cos":
+   ans=Math.cos(radians(n));
+   break;
+
+  case"tan":
+   ans=Math.tan(radians(n));
+   break;
+
+  case"asin":
+   ans=Math.asin(n);
+   if(angle==="DEG")ans*=180/Math.PI;
+   break;
+
+  case"acos":
+   ans=Math.acos(n);
+   if(angle==="DEG")ans*=180/Math.PI;
+   break;
+
+  case"atan":
+   ans=Math.atan(n);
+   if(angle==="DEG")ans*=180/Math.PI;
+   break;
+
+  case"log":
+   ans=Math.log10(n);
+   break;
+
+  case"ln":
+   ans=Math.log(n);
+   break;
+
+  case"exp":
+   ans=Math.exp(n);
+   break;
+
+  case"pow10":
+   ans=Math.pow(10,n);
+   break;
+
+  case"pi":
+   ans=Math.PI;
+   break;
+
+  case"e":
+   ans=Math.E;
+   break;
+
+  case"factorial":
+   ans=factorial(n);
+   break;
+
+  case"inverse":
+   ans=1/n;
+   break;
+
+  case"abs":
+   ans=Math.abs(n);
+   break;
+
+  case"square":
+   ans=n*n;
+   break;
+
+  case"cube":
+   ans=n*n*n;
+   break;
+
+  case"sqrt":
+   ans=Math.sqrt(n);
+   break;
+
+  case"cuberoot":
+   ans=Math.cbrt(n);
+   break;
+
+  case"random":
+   ans=Math.random();
+   break;
+ }
+
+ if(!Number.isFinite(ans)){
+  current="Error";
+ }else{
+  current=format(ans);
+ }
+
+ waiting=false;
+ justCalculated=true;
+
+ update();
+}
 
 
-/* KEYBOARD SUPPORT */
+/* AI MATH ASSISTANT */
+
+function askAI(){
+
+ const q=
+  document.getElementById("question")
+  .value.trim();
+
+ const out=
+  document.getElementById("answer");
+
+ if(!q){
+  out.textContent="Please enter a question.";
+  return;
+ }
+
+ let m;
+
+ /* percentage */
+
+ m=q.match(
+  /(-?\d+(?:\.\d+)?)\s*%\s*of\s*(-?\d+(?:\.\d+)?)/i
+ );
+
+ if(m){
+
+  let ans=
+   parseFloat(m[1])/100*
+   parseFloat(m[2]);
+
+  out.textContent=
+   `${m[1]}% of ${m[2]} = ${ans}`;
+
+  return;
+ }
+
+
+ /* square root */
+
+ m=q.match(
+  /(?:sqrt|square root of)\s*(-?\d+(?:\.\d+)?)/i
+ );
+
+ if(m){
+
+  let n=parseFloat(m[1]);
+
+  out.textContent=
+   n<0
+   ?"Invalid square root."
+   :`√${n} = ${Math.sqrt(n)}`;
+
+  return;
+ }
+
+
+ /* factorial */
+
+ m=q.match(
+  /(?:factorial of|factorial)\s*(\d+)/i
+ );
+
+ if(m){
+
+  let n=parseInt(m[1]);
+  let ans=factorial(n);
+
+  out.textContent=
+   ans===null
+   ?"Invalid factorial."
+   :`${n}! = ${ans}`;
+
+  return;
+ }
+
+
+ /* basic math */
+
+ m=q.match(
+  /(-?\d+(?:\.\d+)?)\s*(\+|minus|subtract|-|\*|x|×|divide by|÷|\/)\s*(-?\d+(?:\.\d+)?)/i
+ );
+
+ if(m){
+
+  let a=parseFloat(m[1]);
+  let b=parseFloat(m[3]);
+  let o=m[2].toLowerCase();
+  let ans;
+
+  if(o==="+")
+   ans=a+b;
+
+  else if(
+   ["minus","subtract","-"].includes(o)
+  )
+   ans=a-b;
+
+  else if(
+   ["*","x","×"].includes(o)
+  )
+   ans=a*b;
+
+  else{
+
+   if(b===0){
+    out.textContent="Cannot divide by zero.";
+    return;
+   }
+
+   ans=a/b;
+  }
+
+  out.textContent=
+   `${a} ${m[2]} ${b} = ${ans}`;
+
+  return;
+ }
+
+
+ out.textContent=
+  "I can solve common math questions such as percentages, square roots, factorials, addition, subtraction, multiplication and division.";
+}
+
+
+/* ENTER = */
 
 document.addEventListener(
-  "keydown",
-  function(event) {
+ "keydown",
+ function(e){
 
-    if (
-      event.key >= "0" &&
-      event.key <= "9"
-    ) {
+  if(
+   document.activeElement.id==="question"
+  ){
 
-      inputNumber(event.key);
+   if(e.key==="Enter")
+    askAI();
 
-    }
-
-    else if (event.key === ".") {
-
-      inputDecimal();
-
-    }
-
-    else if (
-      ["+", "-", "*", "/"]
-      .includes(event.key)
-    ) {
-
-      chooseOperator(event.key);
-
-    }
-
-    else if (
-      event.key === "Enter" ||
-      event.key === "="
-    ) {
-
-      calculate();
-
-    }
-
-    else if (
-      event.key === "Backspace"
-    ) {
-
-      backspace();
-
-    }
-
-    else if (
-      event.key === "Escape"
-    ) {
-
-      clearCalculator();
-
-    }
-
-    else if (
-      event.key === "%"
-    ) {
-
-      percentage();
-
-    }
-
+   return;
   }
+
+  if(e.key>="0"&&e.key<="9")
+   number(e.key);
+
+  else if(e.key==".")
+   decimal();
+
+  else if(
+   ["+","-","*","/"].includes(e.key)
+  )
+   operator(e.key);
+
+  else if(
+   e.key==="Enter"||
+   e.key==="="
+  )
+   equals();
+
+  else if(e.key==="Backspace")
+   backspace();
+
+  else if(e.key==="Escape")
+   clearCalc();
+
+  else if(e.key==="%")
+   percent();
+
+ }
 );
 
 
@@ -1023,4 +764,4 @@ update();
 </script>
 
 </body>
-</html>      
+</html>
