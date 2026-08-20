@@ -2,329 +2,1025 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculator AI</title>
 
-  <meta name="theme-color" content="#0b0d12">
-  <title>Dark Calculator</title>
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
+body {
+  min-height: 100vh;
+  background: #f2f3f7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 18px;
+}
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: #0b0d12;
-      color: #ffffff;
-      font-family: Arial, sans-serif;
+.app {
+  width: min(920px, 100%);
+  display: grid;
+  grid-template-columns: minmax(320px, 430px) 1fr;
+  gap: 18px;
+}
 
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+.card {
+  background: white;
+  border-radius: 28px;
+  padding: 20px;
+  box-shadow: 0 15px 45px rgba(0,0,0,.12);
+}
 
-    .calculator {
-      width: 100%;
-      max-width: 420px;
-      min-height: 100vh;
-      padding: 20px;
+.brand {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 14px;
+}
 
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-    }
+.display {
+  background: #eef0f5;
+  border-radius: 20px;
+  padding: 18px;
+  min-height: 120px;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+}
 
-    .header {
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 15px;
-    }
+.expression {
+  font-size: 16px;
+  color: #777;
+  min-height: 23px;
+  white-space: nowrap;
+  overflow: auto;
+}
 
-    .display {
-      background: #151922;
-      border: 1px solid #272d38;
-      border-radius: 25px;
+.result {
+  font-size: 38px;
+  font-weight: 700;
+  word-break: break-all;
+}
 
-      min-height: 180px;
-      padding: 22px;
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
 
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
+button {
+  height: 60px;
+  border: 0;
+  border-radius: 17px;
+  background: #f0f1f5;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+}
 
-      margin-bottom: 15px;
-    }
+button:active {
+  transform: scale(.95);
+  opacity: .8;
+}
 
-    #expression {
-      color: #8e97a8;
-      font-size: 18px;
-      min-height: 28px;
-      text-align: right;
-      overflow-wrap: anywhere;
-    }
+.operator {
+  background: #e0e7ff;
+}
 
-    #result {
-      color: white;
-      font-size: 52px;
-      font-weight: 600;
-      text-align: right;
-      overflow-wrap: anywhere;
-    }
+.clear {
+  background: #ffe0e0;
+}
 
-    .buttons {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
+.equals {
+  background: #222;
+  color: white;
+}
 
-    button {
-      min-height: 70px;
-      border: none;
-      border-radius: 20px;
+.zero {
+  grid-column: span 2;
+}
 
-      background: #252b36;
-      color: white;
+.memory {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 7px;
+  margin-top: 10px;
+}
 
-      font-size: 22px;
-      font-weight: 600;
+.memory button {
+  height: 38px;
+  font-size: 13px;
+}
 
-      cursor: pointer;
-      transition: transform 0.08s;
-    }
+.tools {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
 
-    button:active {
-      transform: scale(0.94);
-    }
+.tools button {
+  height: 42px;
+  font-size: 14px;
+  flex: 1;
+}
 
-    .function {
-      background: #343b48;
-    }
+.ai-box {
+  margin-top: 14px;
+  background: #f5f6f9;
+  border-radius: 18px;
+  padding: 14px;
+}
 
-    .operator {
-      background: #40345f;
-      color: #eee5ff;
-    }
+.ai-box h3 {
+  font-size: 17px;
+  margin-bottom: 4px;
+}
 
-    .equals {
-      background: #8062d6;
-    }
+.ai-box p {
+  font-size: 13px;
+  color: #777;
+  margin-bottom: 9px;
+}
 
-    @media (max-height: 700px) {
-      .display {
-        min-height: 135px;
-      }
+.ai-row {
+  display: flex;
+  gap: 7px;
+}
 
-      button {
-        min-height: 58px;
-      }
-    }
-  </style>
+.ai-row input {
+  min-width: 0;
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 11px;
+  font-size: 14px;
+}
+
+.ai-row button {
+  height: 44px;
+  padding: 0 15px;
+  background: #222;
+  color: #fff;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.ai-answer {
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.history-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.history-head h2 {
+  font-size: 19px;
+}
+
+.history-list {
+  max-height: 480px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.history-item {
+  background: #f5f6f9;
+  border-radius: 14px;
+  padding: 11px;
+  cursor: pointer;
+}
+
+.history-item .exp {
+  font-size: 13px;
+  color: #777;
+}
+
+.history-item .ans {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 3px;
+}
+
+.empty {
+  color: #888;
+  text-align: center;
+  padding: 30px 10px;
+}
+
+@media(max-width:720px) {
+  .app {
+    grid-template-columns: 1fr;
+  }
+
+  .history-list {
+    max-height: 220px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <div class="calculator">
+<div class="app">
 
-    <div class="header">
-      Calculator
+  <main class="card">
+
+    <div class="brand">
+      Calculator AI
+      <span style="font-size:12px;color:#777;font-weight:500">
+        • Multi-calculation
+      </span>
     </div>
 
-    <div class="display">
-      <div id="expression"></div>
-      <div id="result">0</div>
+    <section class="display">
+      <div class="expression" id="expression"></div>
+      <div class="result" id="result">0</div>
+    </section>
+
+    <!-- MEMORY -->
+    <div class="memory">
+      <button onclick="memoryClear()">MC</button>
+      <button onclick="memoryRecall()">MR</button>
+      <button onclick="memoryAdd()">M+</button>
+      <button onclick="memorySubtract()">M−</button>
     </div>
 
-    <div class="buttons">
+    <!-- CALCULATOR -->
+    <section class="buttons">
 
-      <button class="function"
-              onclick="clearCalculator()">
-        AC
-      </button>
+      <button class="clear" onclick="clearCalculator()">AC</button>
+      <button onclick="backspace()">⌫</button>
+      <button class="operator" onclick="percentage()">%</button>
+      <button class="operator" onclick="chooseOperator('/')">÷</button>
 
-      <button class="function"
-              onclick="backspace()">
-        ⌫
-      </button>
+      <button onclick="inputNumber('7')">7</button>
+      <button onclick="inputNumber('8')">8</button>
+      <button onclick="inputNumber('9')">9</button>
+      <button class="operator" onclick="chooseOperator('*')">×</button>
 
-      <button class="operator"
-              onclick="add('(')">
-        (
-      </button>
+      <button onclick="inputNumber('4')">4</button>
+      <button onclick="inputNumber('5')">5</button>
+      <button onclick="inputNumber('6')">6</button>
+      <button class="operator" onclick="chooseOperator('-')">−</button>
 
-      <button class="operator"
-              onclick="add(')')">
-        )
-      </button>
+      <button onclick="inputNumber('1')">1</button>
+      <button onclick="inputNumber('2')">2</button>
+      <button onclick="inputNumber('3')">3</button>
+      <button class="operator" onclick="chooseOperator('+')">+</button>
 
-      <button onclick="add('7')">7</button>
-      <button onclick="add('8')">8</button>
-      <button onclick="add('9')">9</button>
+      <button class="zero" onclick="inputNumber('0')">0</button>
+      <button onclick="inputDecimal()">.</button>
+      <button class="equals" onclick="calculate()">=</button>
 
-      <button class="operator"
-              onclick="add('÷')">
-        ÷
-      </button>
+    </section>
 
-      <button onclick="add('4')">4</button>
-      <button onclick="add('5')">5</button>
-      <button onclick="add('6')">6</button>
+    <!-- EXTRA FUNCTIONS -->
+    <div class="tools">
+      <button onclick="toggleSign()">±</button>
+      <button onclick="square()">x²</button>
+      <button onclick="squareRoot()">√x</button>
+      <button onclick="clearHistory()">Clear history</button>
+    </div>
 
-      <button class="operator"
-              onclick="add('×')">
-        ×
-      </button>
+    <!-- AI QUESTION BOX -->
+    <div class="ai-box">
 
-      <button onclick="add('1')">1</button>
-      <button onclick="add('2')">2</button>
-      <button onclick="add('3')">3</button>
+      <h3>🤖 AI Calculator</h3>
 
-      <button class="operator"
-              onclick="add('−')">
-        −
-      </button>
+      <p>
+        Ask a math question or calculation.
+      </p>
 
-      <button onclick="add('0')">0</button>
-      <button onclick="add('.')">.</button>
+      <div class="ai-row">
 
-      <button class="operator"
-              onclick="add('+')">
-        +
-      </button>
+        <input
+          id="aiQuestion"
+          placeholder="Example: What is 25% of 480?"
+        >
 
-      <button class="equals"
-              onclick="calculate()">
-        =
-      </button>
+        <button onclick="askAI()">Ask</button>
+
+      </div>
+
+      <div id="aiAnswer" class="ai-answer">
+        AI answer will appear here.
+      </div>
 
     </div>
-  </div>
 
-  <script>
-    let expression = "";
+  </main>
 
-    const expressionDisplay =
-      document.getElementById("expression");
+  <!-- HISTORY -->
+  <aside class="card">
 
-    const resultDisplay =
-      document.getElementById("result");
+    <div class="history-head">
+      <h2>Calculation History</h2>
+      <span id="count">0</span>
+    </div>
 
-    function updateDisplay() {
-      expressionDisplay.textContent = expression;
+    <div class="history-list" id="historyList">
+      <div class="empty">
+        No calculations yet
+      </div>
+    </div>
+
+  </aside>
+
+</div>
+
+
+<script>
+
+let current = "0";
+let previous = null;
+let operator = null;
+let waiting = false;
+let memory = 0;
+
+let history =
+  JSON.parse(
+    localStorage.getItem("easyCalcHistory") || "[]"
+  );
+
+const result =
+  document.getElementById("result");
+
+const expression =
+  document.getElementById("expression");
+
+
+function symbol(op) {
+
+  return ({
+    "*": "×",
+    "/": "÷",
+    "-": "−",
+    "+": "+"
+  })[op] || op;
+
+}
+
+
+function update() {
+
+  result.textContent = current;
+
+  expression.textContent =
+    previous !== null && operator
+      ? `${previous} ${symbol(operator)}`
+      : "";
+
+  renderHistory();
+
+}
+
+
+function inputNumber(number) {
+
+  if (
+    current === "Error" ||
+    waiting
+  ) {
+
+    current = number;
+    waiting = false;
+
+  } else {
+
+    current =
+      current === "0"
+        ? number
+        : current + number;
+
+  }
+
+  update();
+
+}
+
+
+function inputDecimal() {
+
+  if (
+    current === "Error" ||
+    waiting
+  ) {
+
+    current = "0.";
+    waiting = false;
+
+  } else if (
+    !current.includes(".")
+  ) {
+
+    current += ".";
+
+  }
+
+  update();
+
+}
+
+
+/* MULTIPLE CALCULATIONS */
+
+function chooseOperator(op) {
+
+  if (current === "Error")
+    return;
+
+  if (
+    previous !== null &&
+    operator !== null &&
+    !waiting
+  ) {
+
+    calculate(false);
+
+  }
+
+  previous = parseFloat(current);
+  operator = op;
+  waiting = true;
+
+  update();
+
+}
+
+
+function calculate(save = true) {
+
+  if (
+    previous === null ||
+    operator === null
+  )
+    return;
+
+  const a = previous;
+  const b = parseFloat(current);
+
+  let answer;
+
+  if (operator === "+")
+    answer = a + b;
+
+  if (operator === "-")
+    answer = a - b;
+
+  if (operator === "*")
+    answer = a * b;
+
+  if (operator === "/") {
+
+    if (b === 0) {
+
+      current = "Error";
+      previous = null;
+      operator = null;
+
+      update();
+
+      return;
+
     }
 
-    function add(value) {
-      expression += value;
-      updateDisplay();
-    }
+    answer = a / b;
 
-    function clearCalculator() {
-      expression = "";
-      resultDisplay.textContent = "0";
-      updateDisplay();
-    }
+  }
 
-    function backspace() {
-      expression =
-        expression.slice(0, -1);
+  const exp =
+    `${a} ${symbol(operator)} ${b}`;
 
-      updateDisplay();
-    }
+  current =
+    Number(
+      answer.toFixed(12)
+    ).toString();
 
-    function calculate() {
 
-      if (!expression.trim()) {
-        return;
-      }
+  if (save) {
 
-      try {
+    history.unshift({
+      exp: exp,
+      ans: current
+    });
 
-        const safeExpression =
-          expression
-            .replaceAll("×", "*")
-            .replaceAll("÷", "/")
-            .replaceAll("−", "-");
+    history =
+      history.slice(0, 50);
 
-        if (!/^[0-9+\-*/().\s]+$/.test(
-          safeExpression
-        )) {
-          throw new Error();
-        }
-
-        const answer =
-          Function(
-            '"use strict"; return (' +
-            safeExpression +
-            ')'
-          )();
-
-        if (!Number.isFinite(answer)) {
-          throw new Error();
-        }
-
-        resultDisplay.textContent =
-          Number.isInteger(answer)
-            ? answer
-            : Number(answer.toFixed(10));
-
-      } catch {
-        resultDisplay.textContent = "Error";
-      }
-    }
-
-    document.addEventListener(
-      "keydown",
-      function(event) {
-
-        const key = event.key;
-
-        if (/^[0-9.]$/.test(key)) {
-          add(key);
-        }
-
-        else if (key === "+") {
-          add("+");
-        }
-
-        else if (key === "-") {
-          add("−");
-        }
-
-        else if (key === "*") {
-          add("×");
-        }
-
-        else if (key === "/") {
-          add("÷");
-        }
-
-        else if (
-          key === "(" ||
-          key === ")"
-        ) {
-          add(key);
-        }
-
-        else if (
-          key === "Enter" ||
-          key === "="
-        ) {
-          calculate();
-        }
-
-        else if (key === "Backspace") {
-          backspace();
-        }
-
-        else if (key === "Escape") {
-          clearCalculator();
-        }
-      }
+    localStorage.setItem(
+      "easyCalcHistory",
+      JSON.stringify(history)
     );
-  </script>
+
+  }
+
+  previous = null;
+  operator = null;
+  waiting = true;
+
+  update();
+
+}
+
+
+function percentage() {
+
+  current =
+    (
+      parseFloat(current) / 100
+    ).toString();
+
+  update();
+
+}
+
+
+function backspace() {
+
+  if (
+    current === "Error" ||
+    current.length <= 1
+  ) {
+
+    current = "0";
+
+  } else {
+
+    current =
+      current.slice(0, -1);
+
+  }
+
+  update();
+
+}
+
+
+function clearCalculator() {
+
+  current = "0";
+  previous = null;
+  operator = null;
+  waiting = false;
+
+  update();
+
+}
+
+
+function toggleSign() {
+
+  if (
+    current !== "0" &&
+    current !== "Error"
+  ) {
+
+    current =
+      (
+        parseFloat(current) * -1
+      ).toString();
+
+  }
+
+  update();
+
+}
+
+
+function square() {
+
+  if (current !== "Error") {
+
+    current =
+      (
+        parseFloat(current) ** 2
+      ).toString();
+
+  }
+
+  update();
+
+}
+
+
+function squareRoot() {
+
+  if (current !== "Error") {
+
+    const n =
+      parseFloat(current);
+
+    current =
+      n < 0
+        ? "Error"
+        : Math.sqrt(n).toString();
+
+  }
+
+  update();
+
+}
+
+
+/* MEMORY */
+
+function memoryClear() {
+  memory = 0;
+}
+
+function memoryRecall() {
+
+  current = memory.toString();
+  waiting = false;
+
+  update();
+
+}
+
+function memoryAdd() {
+
+  memory +=
+    parseFloat(current) || 0;
+
+}
+
+function memorySubtract() {
+
+  memory -=
+    parseFloat(current) || 0;
+
+}
+
+
+/* HISTORY */
+
+function clearHistory() {
+
+  history = [];
+
+  localStorage.removeItem(
+    "easyCalcHistory"
+  );
+
+  renderHistory();
+
+}
+
+
+function renderHistory() {
+
+  document.getElementById(
+    "count"
+  ).textContent = history.length;
+
+  const box =
+    document.getElementById(
+      "historyList"
+    );
+
+
+  if (!history.length) {
+
+    box.innerHTML =
+      '<div class="empty">No calculations yet</div>';
+
+    return;
+
+  }
+
+
+  box.innerHTML =
+    history.map(
+      (h, i) => `
+
+      <div
+        class="history-item"
+        onclick="useHistory(${i})"
+      >
+
+        <div class="exp">
+          ${h.exp}
+        </div>
+
+        <div class="ans">
+          = ${h.ans}
+        </div>
+
+      </div>
+
+    `
+    ).join("");
+
+}
+
+
+function useHistory(i) {
+
+  current =
+    history[i].ans;
+
+  waiting = false;
+
+  update();
+
+}
+
+
+/* AI MATH QUESTION BOX */
+
+function askAI() {
+
+  const input =
+    document.getElementById(
+      "aiQuestion"
+    );
+
+  const output =
+    document.getElementById(
+      "aiAnswer"
+    );
+
+  const question =
+    input.value.trim();
+
+
+  if (!question) {
+
+    output.textContent =
+      "Please enter a math question.";
+
+    return;
+
+  }
+
+
+  let match;
+
+
+  /* Percentage */
+
+  match =
+    question.match(
+      /(-?\d+(?:\.\d+)?)\s*%\s*(?:of)\s*(-?\d+(?:\.\d+)?)/i
+    );
+
+
+  if (match) {
+
+    const answer =
+      parseFloat(match[1]) /
+      100 *
+      parseFloat(match[2]);
+
+    output.textContent =
+      `${match[1]}% of ${match[2]} = ${answer}`;
+
+    return;
+
+  }
+
+
+  /* Square root */
+
+  match =
+    question.match(
+      /(?:square root of|sqrt\s*)(-?\d+(?:\.\d+)?)/i
+    );
+
+
+  if (match) {
+
+    const n =
+      parseFloat(match[1]);
+
+    if (n < 0) {
+
+      output.textContent =
+        "Square root of a negative number is not a real number.";
+
+    } else {
+
+      output.textContent =
+        `√${n} = ${Math.sqrt(n)}`;
+
+    }
+
+    return;
+
+  }
+
+
+  /* Square */
+
+  match =
+    question.match(
+      /(?:square of|squared)\s*(-?\d+(?:\.\d+)?)/i
+    );
+
+
+  if (match) {
+
+    const n =
+      parseFloat(match[1]);
+
+    output.textContent =
+      `${n}² = ${n * n}`;
+
+    return;
+
+  }
+
+
+  /* Addition / subtraction /
+     multiplication / division */
+
+  match =
+    question.match(
+      /(-?\d+(?:\.\d+)?)\s*(\+|minus|subtract|−|-|\*|x|×|divide by|÷|\/)\s*(-?\d+(?:\.\d+)?)/i
+    );
+
+
+  if (match) {
+
+    const a =
+      parseFloat(match[1]);
+
+    const b =
+      parseFloat(match[3]);
+
+    const op =
+      match[2].toLowerCase();
+
+    let answer;
+
+
+    if (op === "+") {
+
+      answer = a + b;
+
+    }
+
+    else if (
+      [
+        "minus",
+        "subtract",
+        "−",
+        "-"
+      ].includes(op)
+    ) {
+
+      answer = a - b;
+
+    }
+
+    else if (
+      [
+        "*",
+        "x",
+        "×"
+      ].includes(op)
+    ) {
+
+      answer = a * b;
+
+    }
+
+    else {
+
+      if (b === 0) {
+
+        output.textContent =
+          "Cannot divide by zero.";
+
+        return;
+
+      }
+
+      answer = a / b;
+
+    }
+
+
+    output.textContent =
+      `${a} ${match[2]} ${b} = ${answer}`;
+
+    return;
+
+  }
+
+
+  output.textContent =
+    "I can currently solve percentages, square roots, squares, addition, subtraction, multiplication and division.";
+
+}
+
+
+/* ENTER KEY IN AI BOX */
+
+document
+  .getElementById("aiQuestion")
+  .addEventListener(
+    "keydown",
+    function(event) {
+
+      if (event.key === "Enter") {
+        askAI();
+      }
+
+    }
+  );
+
+
+/* KEYBOARD SUPPORT */
+
+document.addEventListener(
+  "keydown",
+  function(event) {
+
+    if (
+      event.key >= "0" &&
+      event.key <= "9"
+    ) {
+
+      inputNumber(event.key);
+
+    }
+
+    else if (event.key === ".") {
+
+      inputDecimal();
+
+    }
+
+    else if (
+      ["+", "-", "*", "/"]
+      .includes(event.key)
+    ) {
+
+      chooseOperator(event.key);
+
+    }
+
+    else if (
+      event.key === "Enter" ||
+      event.key === "="
+    ) {
+
+      calculate();
+
+    }
+
+    else if (
+      event.key === "Backspace"
+    ) {
+
+      backspace();
+
+    }
+
+    else if (
+      event.key === "Escape"
+    ) {
+
+      clearCalculator();
+
+    }
+
+    else if (
+      event.key === "%"
+    ) {
+
+      percentage();
+
+    }
+
+  }
+);
+
+
+update();
+
+</script>
 
 </body>
-</html>
+</html>      
